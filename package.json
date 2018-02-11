@@ -1,0 +1,30 @@
+{
+  "name": "madb",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "objutil": "^2.17.2"
+  },
+  "devDependencies": {
+    "ava": "^0.25.0",
+    "memwatch-next": "^0.3.0"
+  },
+  "scripts": {
+    "test": "ava"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/futurist/madb.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MPL",
+  "bugs": {
+    "url": "https://github.com/futurist/madb/issues"
+  },
+  "homepage": "https://github.com/futurist/madb#readme"
+}
