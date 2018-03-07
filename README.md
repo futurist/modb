@@ -63,6 +63,7 @@ console.timeEnd('modb find')
 The result:
 
 >vanilla find: 2659.199ms
+
 >modb speed: **3.985ms**
 
 # API
