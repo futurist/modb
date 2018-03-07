@@ -25,7 +25,7 @@ const {assign, keys} = Object
 
 const ERR_DUPLICATE = 'ERR_DUPLICATE'
 
-function MemDB (dataArray, indexDef, config={}) {
+function MODB (dataArray, indexDef, config={}) {
   this.config = assign({
     idKey: 'id', notKey: '$not'
   }, config)
@@ -43,29 +43,31 @@ function MemDB (dataArray, indexDef, config={}) {
 }
 
 // class methods
-MemDB.prototype.clear = function () {
+MODB.prototype.clear = function () {
   // data is Array, item is Object, always increase(push)
-  // when remove, just set to null, not using DELETE!!!
+  // when remove, just set to null, don't use DELETE!!!
   // https://www.smashingmagazine.com/2012/11/writing-fast-memory-efficient-javascript/
   this.data = []
   this.index = Object.create(null)
   this.indexDef = Object.create(null)
-
 }
 
-MemDB.prototype.createIndex = function(key, def) {
-  if(def===null) return {
-    error: 'createIndex: empty definition, skip create index'
+MODB.prototype.createIndex = function(key, def) {
+  const {data, index, indexDef} = this
+  let idx
+  if(!isNaN(def)){
+    idx = def+0
+    def = indexDef[key] || {}
+  } else {
+    def = indexDef[key] = def || indexDef[key] || {}
   }
-  def = def || {}
-  const {data, index} = this
-  if(key in index) return {
-    error: 'createIndex: index already exists'
-  }
+  
 
-  this.indexDef[key] = def
-  const keyObj = index[key] = Object.create(null)
-  data.forEach((v, i)=>{
+  if(def.skip) return {ok:0}
+
+  const keyObj = index[key] = index[key] || Object.create(null)
+  const createFn = i=>{
+    const v = data[i]
     if(v==null) return
 
     const parts = key.split('.$.')
@@ -79,7 +81,7 @@ MemDB.prototype.createIndex = function(key, def) {
     }else{
       arr = [arr]
     }
-    
+
     arr.forEach(id=>{
       // assign index data code block
       // const id = o.got(v, key)
@@ -92,11 +94,14 @@ MemDB.prototype.createIndex = function(key, def) {
       }
     })
 
-  })
+  }
+
+  if(idx==null) data.forEach((v,i)=>createFn(i))
+  else createFn(idx)
   return {ok: 1}
 }
 
-MemDB.prototype.find = function (key, id, returnIndex) {
+MODB.prototype.find = function (key, id, returnIndex) {
   const {data, index, config} = this
   const {notKey} = config
 
@@ -122,7 +127,7 @@ MemDB.prototype.find = function (key, id, returnIndex) {
     : data[d]
 }
 
-MemDB.prototype.findMany = function (cond, returnIndex) {
+MODB.prototype.findMany = function (cond, returnIndex) {
   if(!cond) return
   const arr = []
   return isArray(cond)
@@ -130,7 +135,7 @@ MemDB.prototype.findMany = function (cond, returnIndex) {
   : this.findCond(cond, returnIndex)
 }
 
-MemDB.prototype.findCond = function (obj, returnIndex) {
+MODB.prototype.findCond = function (obj, returnIndex) {
   /*
   obj: Object { id:1, 'parentID.id':[2,3] }
   return $and of condition
@@ -147,7 +152,7 @@ MemDB.prototype.findCond = function (obj, returnIndex) {
   return isArray(ret) ? ret.filter(Boolean) : []
 }
 
-MemDB.prototype.insert = function (obj, opt={}) {
+MODB.prototype.insert = function (obj, opt={}) {
   if(obj==null) return {ok: 0}
   const {data, index, indexDef, config} = this
   const {skipUnique={}} = opt
@@ -159,8 +164,7 @@ MemDB.prototype.insert = function (obj, opt={}) {
   data[i] = null  // in case insert failed, indexObj will point to null
   for(let key in indexDef){
     const def = indexDef[key]
-    const keyObj = index[key]
-    if(def==null || keyObj==null) continue
+    if(def==null) continue
 
     // assign index data code block
     const id = o.got(obj, key)
@@ -170,23 +174,17 @@ MemDB.prototype.insert = function (obj, opt={}) {
       code: ERR_DUPLICATE,
       key, id
     }
-    if(def.multiple){
-      let arr = keyObj[id]
-      if(!isArray(arr)) arr = keyObj[id] = []
-      arr.push(i)
-    } else {
-      keyObj[id] = i
-    }
-
   }
 
   data[i] = obj
+
+  keys(indexDef).forEach(key=>this.createIndex(key, i))
 
   return {ok: 1}
 }
 
 
-MemDB.prototype.delete = function (key, id) {
+MODB.prototype.delete = function (key, id) {
   const d = this.find(key, id, true)
   if(isEmptyData(d)) return {ok: 0}
   
@@ -197,7 +195,7 @@ MemDB.prototype.delete = function (key, id) {
   return {ok: 1, dataIndex: d, deleted: prev}
 }
 
-MemDB.prototype.update = function (key, id, newItem, config={}) {
+MODB.prototype.update = function (key, id, newItem, config={}) {
   if(newItem==null) return {ok: 0}
   const {data, indexDef} = this
   const def = indexDef[key]||{}
@@ -226,7 +224,7 @@ MemDB.prototype.update = function (key, id, newItem, config={}) {
 }
 
 // export the class
-module.exports = MemDB
+module.exports = MODB
 
 function isEmptyData(obj){
   return obj==null
@@ -246,4 +244,3 @@ function addToSet(arr, arr2){
   arr2.forEach(item=> arr.indexOf( item ) < 0 && arr.push( item ))
 }
 // var a=[]; addToSet(a, [1,2,3,2,1]); console.log(a)
-

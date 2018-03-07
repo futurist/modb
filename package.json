@@ -1,5 +1,5 @@
 {
-  "name": "madb",
+  "name": "modb",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -10,21 +10,20 @@
     "objutil": "^2.17.2"
   },
   "devDependencies": {
-    "ava": "^0.25.0",
-    "memwatch-next": "^0.3.0"
+    "ava": "^0.25.0"
   },
   "scripts": {
     "test": "ava"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/futurist/madb.git"
+    "url": "git+https://github.com/futurist/modb.git"
   },
   "keywords": [],
-  "author": "",
+  "author": "James Yang",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/futurist/madb/issues"
+    "url": "https://github.com/futurist/modb/issues"
   },
-  "homepage": "https://github.com/futurist/madb#readme"
+  "homepage": "https://github.com/futurist/modb#readme"
 }

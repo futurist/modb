@@ -1,4 +1,6 @@
-# MADB
-In Memory Array DB in JS
+# MODB
+In Memory Object DataBase for JS.
+
+
 
 

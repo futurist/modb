@@ -3,13 +3,13 @@ import test from 'ava'
 import util from 'util'
 // import stream from '../stream'
 
-var memwatch = require('memwatch-next')
-memwatch.on('leak', function(info) {
-  console.log('Memory Leak!!!', info)
-})
-memwatch.on('stats', function(info) {
-  console.log(info)
-})
+// var memwatch = require('memwatch-next')
+// memwatch.on('leak', function(info) {
+//   console.log('Memory Leak!!!', info)
+// })
+// memwatch.on('stats', function(info) {
+//   console.log(info)
+// })
 
 
 test('init', t => {
@@ -52,18 +52,33 @@ test('create Index', t => {
   })
 })
 
-function flatten (list) {
-  // recursively flatten array
-for (var i = 0; i < list.length; i++) {
-  if (Array.isArray(list[i])) {
-    list = list.concat.apply([], list)
-      // check current index again and flatten until there are no more
-      // nested arrays at that index
-    i--
-  }
-}
-return list
-}
+test('update Index', t => {
+  const data = [
+    {id:1, parentID:[{id:20}, {id:21}], c:3}, 
+    {id:2, parentID:[{id:20}, {id:23}], c:4}, 
+  ]
+  const d = new db(data, {
+    'parentID.$.id': {multiple: true},
+  })
+
+  const newItem = {id:2, parentID:[{id:22}], c:5}
+
+  d.update('id', 2, newItem, {replace:true})
+  // console.log('after',util.inspect(d.index), util.inspect(d.data))
+
+  t.deepEqual(d.index, {
+    id:{
+      1:0,
+      2:2,
+    },
+    'parentID.$.id':{
+      20:[0,1],
+      21: [0],
+      22: [2],
+      23: [1]
+    }
+  })
+})
 
 test('find', t => {
   const data = [
@@ -221,7 +236,7 @@ test('findMany', t => {
     id: {$not: 3},
     'parentID.id': 3
   }]), [
-    
+
   ])
 
 })
@@ -270,6 +285,7 @@ test('insert unique', t => {
   const newItem = {id:2, parentID:{id:3}, c:7}
   const d = new db(data)
   t.true(!!d.insert(newItem).error)
+  // console.log(util.inspect(d.data))
 })
 
 test('update - basic 1', t => {
