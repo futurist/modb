@@ -1,10 +1,16 @@
 # MODB
 In Memory Object DataBase for JS.
 
+
+[![npm](https://img.shields.io/npm/v/modb.svg "Version")](https://www.npmjs.com/package/modb)
+[![Build Status](https://travis-ci.org/futurist/modb.svg?branch=master)](https://travis-ci.org/futurist/modb)
+[![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+
+
 # Install
 
 ```
-npm i modb -S
+npm i modb-js -S
 ```
 
 # Why
@@ -36,7 +42,7 @@ const arr = Array.from({length: 1e6}, (val,id) => ({
 Test of `find` item for `10000` times:
 
 ```js
-const modb = require('modb')  // require the lib
+const modb = require('modb-js')  // require the lib
 const db = new modb(arr)  // create indexes
 
 // A. vanilla .find
