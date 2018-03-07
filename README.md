@@ -2,7 +2,7 @@
 In Memory Object DataBase for JS.
 
 
-[![npm](https://img.shields.io/npm/v/modb.svg "Version")](https://www.npmjs.com/package/modb)
+[![npm](https://img.shields.io/npm/v/modb-js.svg "Version")](https://www.npmjs.com/package/modb-js)
 [![Build Status](https://travis-ci.org/futurist/modb.svg?branch=master)](https://travis-ci.org/futurist/modb)
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
