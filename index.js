@@ -13,9 +13,8 @@ function MODB (dataArray, indexDef, config = {}) {
   }, indexDef)
 
   this.clear()
-  if (isArray(dataArray)) {
-    this.data = dataArray
-  }
+  if (!isArray(dataArray)) dataArray = []
+  this.data = dataArray
   if (indexDef) {
     keys(indexDef).forEach(key => this.createIndex(key, indexDef[key]))
   }

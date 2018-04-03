@@ -28,12 +28,8 @@ test('init', t => {
     2:1,
   }})
 
-  const e = new db(data, {a:{unique:true}, id:{skip:true}})
-  t.deepEqual(e.index, {a: {
-    2:0,
-    5:1,
-  }})
-  t.deepEqual(e.find('a', 5), data[1])
+  const e = new db()
+  t.deepEqual(e.data, [])
 })
 
 
