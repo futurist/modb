@@ -113,6 +113,8 @@ test('find', t => {
   t.deepEqual(d.find('parentID.id', [2,3]), [
     data[0], data[1], data[2]
   ])
+  // console.log(util.inspect(d.find('parentID.id', []), null, null))
+  t.deepEqual(d.find('parentID.id', []), [])
 })
 
 
